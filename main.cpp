@@ -16,7 +16,7 @@ public:
     bool openBMP(const std::string& fileName) {
         file.open(fileName, std::ios::binary);
         if (!file.is_open()) {
-            std::cerr << "Error: Could not open file!" << std::endl;
+            std::cerr << "Ошибка: не могу открыть файл!" << std::endl;
             return false;
         }
 
@@ -26,16 +26,16 @@ public:
 
         // Проверка формата файла
         if (fileHeader.bfType != 0x4D42) {  // Проверяем "BM" сигнатуру
-            std::cerr << "Error: Not a BMP file!" << std::endl;
+            std::cerr << "Ошибка: файл не BMP!" << std::endl;
             return false;
         }
 
         if (infoHeader.biBitCount != 24 && infoHeader.biBitCount != 32) {
-            std::cerr << "Error: Only 24 or 32-bit BMP files are supported!" << std::endl;
+            std::cerr << "Ошибка: поддерживаются только 24 или 32 битные файлы BMP!" << std::endl;
             return false;
         }
 
-        // Выделение памяти для хранения пикселей
+        // Выделение памяти для хранения
         int rowSize = ((infoHeader.biWidth * (infoHeader.biBitCount / 8) + 3) & (~3));
         pixelData = new unsigned char[rowSize * infoHeader.biHeight];
 
@@ -46,9 +46,10 @@ public:
         return true;
     }
 
+    // Отрисовка изображения
     void displayBMP() {
         if (!pixelData) {
-            std::cerr << "Error: No BMP data to display!" << std::endl;
+            std::cerr << "Ошибка: отсутствуют данные для отрисовки!" << std::endl;
             return;
         }
 
@@ -69,7 +70,7 @@ public:
                     std::cout << "#";  
                 }
                 else {
-                    std::cerr << "Error: Unsupported color detected!" << std::endl;
+                    std::cerr << "Ошибка: присутствуют цветные пиксели!" << std::endl;
                     return;
                 }
             }
@@ -93,16 +94,16 @@ public:
 };
 
 int main(int argc, char* argv[]) {
+    setlocale(LC_ALL, "Russian");
+
     if (argc != 2) {
-        std::cerr << "Usage: drawBmp.exe <path_to_bmp_file>" << std::endl;
+        std::cerr << "Не указан путь до картинки BMP!" << std::endl;
         return 1;
     }
 
-    //const char* path = "C:/Users/Professional/Downloads/in.bmp";
-
     BMPReader* bmpReader = new BMPReader;
     if (!bmpReader->openBMP(argv[1])) {
-        std::cout << "ERROR " << *argv << std::endl;
+        std::cout << "ERROR " << std::endl;
         return 1;
     }
 
